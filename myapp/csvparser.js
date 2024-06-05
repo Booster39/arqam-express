@@ -1,12 +1,10 @@
-module.exports = function() {
 
-    this.parse = function() {
 const fs = require('fs');
 const Papa = require('papaparse');
-const { Client } = require('mysql');
+const mysql = require('mysql2');
 
-const csvFirstFile = fs.readFileSync('assets/csv/EXP_PLANNING.csv', 'utf8');
-const csvSecondFile = fs.readFileSync('assets/csv/EXP_ELEVE.csv', 'utf8');
+const csvFirstFile = fs.readFileSync('../assets/csv/EXP_PLANNING.csv', 'utf8');
+const csvSecondFile = fs.readFileSync('../assets/csv/EXP_ELEVE.csv', 'utf8');
 
 const parsedFirstData = Papa.parse(csvFirstFile, {
     header: true,
@@ -18,7 +16,7 @@ const parsedSecondData = Papa.parse(csvSecondFile, {
     dynamicTyping: true,
   });
 
-  const client = new Client({
+  const client = mysql.createConnection({
     user: 'root',
     host: 'localhost',
     database: 'arqam',
@@ -28,7 +26,6 @@ const parsedSecondData = Papa.parse(csvSecondFile, {
   
   client.connect();
 
-  console.log("yes")
 parsedFirstData.data.forEach((row) => {
     const columnNames = Object.keys(row);
     const placeholders = columnNames.map(() => '$').join(', ');
@@ -44,7 +41,3 @@ parsedFirstData.data.forEach((row) => {
       }
     });
   });
-
-  return parsedFirstData;
-}
-}
